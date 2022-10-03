@@ -115,7 +115,6 @@ namespace ArticleService.WebAPI.Controllers
                 return false;
             dbCtx.Remove(DeleteArticle);
             await dbCtx.SaveChangesAsync();
-            //if (DeleteArticle == null) throw new Exception("文章已被删除");
             return true;
         }
 

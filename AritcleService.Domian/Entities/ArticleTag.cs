@@ -30,12 +30,5 @@ namespace ArticleService.Domain.Entities
             };
         }
 
-        //public static ArticleTag Get(string id)
-        //{
-        //    return new ArticleTag
-        //    {
-        //        TagName = TagName
-        //    };
-        //}
     }
 }

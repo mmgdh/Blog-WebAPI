@@ -7,7 +7,7 @@ namespace CommonHelpers
     {
         public static string GetContent(string Input,int Max)
         {
-            string pattern = "[\u4E00-\u9FA5A-Za-z0-9_ .]";
+            string pattern = "[\u4E00-\u9FA5A-Za-z0-9_ .，,。]";
             string replacement = "";
             StringBuilder result = new StringBuilder();
             foreach (Match match in Regex.Matches(Input, pattern))

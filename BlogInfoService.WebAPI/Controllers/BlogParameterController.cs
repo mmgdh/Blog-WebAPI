@@ -82,7 +82,6 @@ namespace BlogInfoService.WebAPI.Controllers
         [HttpGet]
         public async Task<List<BlogParamterResponse>> GetAllBlogParameters()
         {
-            await hubContext.Clients.All.SendAsync("ReceiveMessage", "ces111", "csssss");
             List<BlogParameter> blogParamters = new List<BlogParameter>();
             var redisRet = redisHelper.KeyExists(KeyName);
             if (redisRet)

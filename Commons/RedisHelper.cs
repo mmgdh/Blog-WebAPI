@@ -9,6 +9,7 @@ namespace CommonHelpers
         private IConnectionMultiplexer connectionMultiplexer;
         public int DbNum=0;
         public string RedisKey = "";
+        public string strRedisLock = "RedisLock_";
         //private TimeSpan DefaultExpire=30000;
 
         public RedisHelper(IConnectionMultiplexer connectionMultiplexer)
@@ -51,21 +52,85 @@ namespace CommonHelpers
 
         public async Task ReSetRedisValue<T>(string KeyName,List<T>? values = null,Func<Task<List<T>>>? reSetFunc=null, TimeSpan? timeSpan=null)
         {
-            //删除后重新设置redis缓存
-            KeyDelete(KeyName);
-            if (values == null)
+            RedisLock(KeyName, timeSpan,async () =>
             {
-                if (reSetFunc != null)
-                    values = await reSetFunc.Invoke();
-                else
-                    values = new List<T>();
-            }
-            await AddListAsync<T>(KeyName, values);
-            await KeyExpire(KeyName, timeSpan);
+                //删除后重新设置redis缓存
+                KeyDelete(KeyName);
+                if (values == null)
+                {
+                    if (reSetFunc != null)
+                        values = await reSetFunc.Invoke();
+                    else
+                        values = new List<T>();
+                }
+                await AddListAsync<T>(KeyName, values);
+                await KeyExpire(KeyName, timeSpan);
+            });
+
+
         }
         private RedisKey[] ConvertRedisKeys(List<string> rediskey)
         {
             return rediskey.Select(key => (RedisKey)key).ToArray();
+        }
+
+        /// <summary>
+        /// Redis锁
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Key"></param>
+        /// <param name="Timeduration"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public bool RedisLock<T>(string Key,TimeSpan? Timeduration,Func<T> func)
+        {
+            TimeSpan duration = Timeduration ?? TimeSpan.FromSeconds(30);
+             var key = strRedisLock + Key;
+            RedisValue token = Environment.MachineName;
+            return Do(db =>
+            {
+                int Count = 10;
+                while(Count>0)//测试10次获取，若失败则返回false
+                {
+                    if (db.LockTake(key, token, duration))//设置锁
+                    {
+                        try
+                        {
+                            CancellationTokenSource tokenSource = new CancellationTokenSource();
+                            CancellationToken Cancletoken = tokenSource.Token;
+                            //启动线程，保证服务能完成
+                            Task.Run(() =>
+                            {
+                                while (true)
+                                {
+                                    if (Cancletoken.IsCancellationRequested)
+                                    {
+                                        break;
+                                    }                                
+                                   Thread.Sleep(duration / 5 * 4);
+                                   db.LockExtend(key, token, duration);//重置时间
+                                }
+                            }, Cancletoken);
+                            func.Invoke();//执行方法
+                            tokenSource.Cancel();//关闭上面开启的任务
+                        }
+                        finally
+                        {
+                            db.LockRelease(key, token);//释放锁
+
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        Task.Delay(duration/10);
+                        Count--;
+                    }
+                }
+                return false;
+
+            });
+
         }
         #endregion
 

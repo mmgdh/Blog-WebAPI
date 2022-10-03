@@ -20,17 +20,6 @@ namespace StreamService.WebAPI.EventHandlers
             this.dbContext = dbContext;
         }
 
-        //public override Task HandleDynamic(string eventName, dynamic eventData)
-        //{
-        //    var bytes = ImageHelper.Base64ToImage(eventData.Base64);
-        //    using Stream stream = new MemoryStream(bytes);
-        //    FormFile formFile = new FormFile(stream, eventData.Offset,eventData.Length, eventData.Name, eventData.FileName);
-        //    var ret = repository.UploadFileAsync(formFile);
-
-        //    eventBus.publish(ConstEventName.FileCallBackUpdated, ret.Id);
-        //    return ret;
-        //}
-
         public override async Task HandleJson(string eventName, EventBusParameter.FileUpload_Parameter? eventData)
         {
             if (eventData == null) return;
