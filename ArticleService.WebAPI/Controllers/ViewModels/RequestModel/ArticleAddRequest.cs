@@ -24,7 +24,7 @@ namespace ArticleService.WebAPI.Controllers.ViewModels.RequestModel
             RuleFor(x => x.html).NotEmpty();
             RuleFor(x => x.Tags).NotEmpty();
             //异步报错了，后续再解决
-            RuleFor(x => x.Tags).Must((Tags) => dbCtx.Query<ArticleTag>().Any(T => Tags.Contains(T.Id)))
+            RuleFor(x => x.Tags).Must((Tags) => Tags!=null && dbCtx.Query<ArticleTag>().Any(T => Tags.Contains(T.Id)))
                 .WithMessage(c => $"所选标签在数据库内不存在，请重新选择");
         }
     }

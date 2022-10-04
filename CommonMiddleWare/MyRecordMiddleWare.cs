@@ -54,9 +54,6 @@ namespace CommonMiddleWare
                 {
                     info.requestdata = request.QueryString.Value;
                 }
-                var json = JsonConvert.SerializeObject(info);
-                logger.LogWarning("*************************");
-                logger.LogInformation(json);
                 var originalBodyStream = context.Response.Body;
                 using (var responseBody = new MemoryStream())
                 {
@@ -87,7 +84,7 @@ namespace CommonMiddleWare
                     context.Response.Body = originalBodyStream;
                 }
 
-                json = JsonConvert.SerializeObject(info);
+                var json = JsonConvert.SerializeObject(info);
                 logger.LogInformation(json);
 
             }

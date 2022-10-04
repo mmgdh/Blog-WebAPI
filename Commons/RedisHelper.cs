@@ -145,7 +145,7 @@ namespace CommonHelpers
         }
         public async Task<Tuple<byte[], string>> GetFileCacheAsync(string key)
         {
-            var Cache = HashGetAll(key);
+            var Cache = await HashGetAllAsync(key);
             if (Cache == null || Cache.Count() == 0) return null;
             var strbyte = Cache.Where(x=>x.Name=="Item1").First().Value;
             var fileType = Cache.Where(x=>x.Name=="Item2").First().Value;
@@ -302,6 +302,15 @@ namespace CommonHelpers
                 return db.HashGetAll(key);
             });
         }
+
+        public Task<HashEntry[]> HashGetAllAsync(string key)
+        {
+            return Do(async db =>
+            {
+                return await db.HashGetAllAsync(key);
+            });
+        }
+
         public RedisValue[] HashGetAll(string key, RedisValue[] datafiled)
         {
             return Do(db =>
