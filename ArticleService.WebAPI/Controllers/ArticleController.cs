@@ -66,8 +66,10 @@ namespace ArticleService.WebAPI.Controllers
             {
                 EventBusHelper.EventBusFunc_UploadImg(EnumCallBackEntity.ArticleTitleImage, UploadImageType.ArticleTitleImage, request.file, AddArticle.Id, eventBus);
             }
-            await dbCtx.SaveChangesAsync();
 
+            await dbCtx.SaveChangesAsync();
+            EventBusParameter.ArticleSearch_Parameter search_Parameter = new EventBusParameter.ArticleSearch_Parameter(AddArticle.Id, AddArticle.Title, AddArticle.articleContent.Content);
+            eventBus.publish(ConstEventName.Search_Article, search_Parameter);
 
             return AddArticle.Id;
         }
@@ -102,7 +104,8 @@ namespace ArticleService.WebAPI.Controllers
                 EventBusHelper.EventBusFunc_UploadImg(EnumCallBackEntity.ArticleTitleImage, UploadImageType.ArticleTitleImage, request.file, ModifyArticle.Id, eventBus);
             }
             var ret = await dbCtx.SaveChangesAsync();
-
+            EventBusParameter.ArticleSearch_Parameter search_Parameter = new EventBusParameter.ArticleSearch_Parameter(ModifyArticle.Id, ModifyArticle.Title, ModifyArticle.articleContent.Content);
+            eventBus.publish(ConstEventName.Search_Article, search_Parameter);
             return ModifyArticle;
         }
 
