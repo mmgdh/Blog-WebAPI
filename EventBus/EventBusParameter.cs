@@ -15,6 +15,8 @@ namespace EventBus
         public record UploadFile(string Base64, int Offset, int Length, string Name, string FileName,string ContentType);
         public record FileUpload_Parameter(string UploadType,UploadFile UploadFile, CallBackNeed CallBackNeed);
 
+        public record ArticleSearch_Parameter(Guid id, string Title,string content);
+
 
     }
 }

@@ -5,7 +5,7 @@ using StreamService.Infrastructure;
 
 namespace StreamService.WebAPI.EventHandlers
 {
-    [EventName(ConstEventName.FileUpload)]
+    [EventName(ConstEventName.Stream_FileUpload)]
     public class FileUploadEventHandler : JsonIntegrationEventHandler<EventBusParameter.FileUpload_Parameter>
     {
         private readonly IUploadItemRepository repository;

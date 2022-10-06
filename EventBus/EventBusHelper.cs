@@ -39,7 +39,7 @@ namespace EventBus
             var UploadFile = EventBusHelper.IFormFileToEventBusParameter(formFile);
             var CallBackNeed = new EventBusParameter.CallBackNeed(MasterId, enumCallBackEntity, ConstEventName.Article_FileCallBackUpdated);
             EventBusParameter.FileUpload_Parameter parameter = new EventBusParameter.FileUpload_Parameter(UploadImgType, UploadFile, CallBackNeed);
-            eventBus.publish(ConstEventName.FileUpload, parameter);
+            eventBus.publish(ConstEventName.Stream_FileUpload, parameter);
         }
     }
 }

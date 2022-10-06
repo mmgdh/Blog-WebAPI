@@ -52,7 +52,7 @@ namespace BlogInfoService.WebAPI.Controllers
             var ret =await dbContext.SaveChangesAsync() > 0;
             if (ret)
             {
-                await redisHelper.ReSetRedisValue(KeyName, reSetFunc: new Func<Task<List<BlogParameter>>>(async () => { return await dbContext.blogParameters.ToListAsync(); }));
+                 redisHelper.ReSetRedisValue(KeyName, reSetFunc: new Func<Task<List<BlogParameter>>>(async () => { return await dbContext.blogParameters.ToListAsync(); }));
             }
             return ret;
         }
@@ -66,7 +66,7 @@ namespace BlogInfoService.WebAPI.Controllers
             var ret = await dbContext.SaveChangesAsync() > 0;
             if (ret)
             {
-                await redisHelper.ReSetRedisValue(KeyName, reSetFunc: new Func<Task<List<BlogParameter>>>(async () => { return await dbContext.blogParameters.ToListAsync(); }));
+                 redisHelper.ReSetRedisValue(KeyName, reSetFunc: new Func<Task<List<BlogParameter>>>(async () => { return await dbContext.blogParameters.ToListAsync(); }));
                 await hubContext.Clients.All.SendAsync("UpdateParameter", Param.Id, Param.ParamValue);
             }
 
@@ -76,7 +76,7 @@ namespace BlogInfoService.WebAPI.Controllers
         [Authorize]
         public async Task<bool> RefreshBlogParameter()
         {
-            await redisHelper.ReSetRedisValue(KeyName, reSetFunc: new Func<Task<List<BlogParameter>>>(async () => { return await dbContext.blogParameters.ToListAsync(); }));
+            redisHelper.ReSetRedisValue(KeyName, reSetFunc: new Func<Task<List<BlogParameter>>>(async () => { return await dbContext.blogParameters.ToListAsync(); }));
             return true;
         }
         [HttpGet]
@@ -91,7 +91,7 @@ namespace BlogInfoService.WebAPI.Controllers
             else
             {
                 blogParamters = await dbContext.blogParameters.ToListAsync();
-                await redisHelper.ReSetRedisValue(KeyName, blogParamters, new Func<Task<List<BlogParameter>>>(async ()=> { return await dbContext.blogParameters.ToListAsync(); } ));
+                redisHelper.ReSetRedisValue(KeyName, blogParamters, new Func<Task<List<BlogParameter>>>(async ()=> { return await dbContext.blogParameters.ToListAsync(); } ));
             }
 
 
@@ -104,18 +104,6 @@ namespace BlogInfoService.WebAPI.Controllers
             var blogParamter = await dbContext.blogParameters.Where(x => ParamName == x.ParamName).FirstOrDefaultAsync();
             if (blogParamter == null) throw new Exception("未找到对应的参数信息");
             return BlogParamterResponse.CreateResponse(blogParamter);
-        }
-
-        private async Task ReSetBlogParamRedis1(List<BlogParameter>? blogParamters=null)
-        {
-            //删除后重新设置redis缓存
-            redisHelper.KeyDelete(KeyName);
-            if (blogParamters==null)
-            {
-                blogParamters = await dbContext.blogParameters.ToListAsync();
-            }
-            await redisHelper.AddListAsync<BlogParameter>(KeyName, blogParamters);
-            await redisHelper.KeyExpire(KeyName, TimeSpan.FromSeconds(30));
         }
     }
 }

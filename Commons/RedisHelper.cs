@@ -20,9 +20,11 @@ namespace CommonHelpers
 
         private T Do<T>(Func<IDatabase, T> func)
         {
+            //connectionMultiplexer.PreserveAsyncOrder = false;
             var database = connectionMultiplexer.GetDatabase(DbNum);
             return func(database);
         }
+
 
         private void Do(Action<IDatabase> func)
         {
@@ -50,7 +52,7 @@ namespace CommonHelpers
             return result;
         }
 
-        public async Task ReSetRedisValue<T>(string KeyName,List<T>? values = null,Func<Task<List<T>>>? reSetFunc=null, TimeSpan? timeSpan=null)
+        public void ReSetRedisValue<T>(string KeyName,List<T>? values = null,Func<Task<List<T>>>? reSetFunc=null, TimeSpan? timeSpan=null)
         {
             RedisLock(KeyName, timeSpan,async () =>
             {
@@ -64,7 +66,7 @@ namespace CommonHelpers
                         values = new List<T>();
                 }
                 await AddListAsync<T>(KeyName, values);
-                await KeyExpire(KeyName, timeSpan);
+                await KeyExpireAsync(KeyName, timeSpan);
             });
 
 
@@ -138,20 +140,22 @@ namespace CommonHelpers
         public async Task<bool> AddFileCache(string key, byte[] bytes,string fileType)
         {
             string strByte = Convert.ToBase64String(bytes);
-            await HashSet(key, "Item1", strByte);
-            await HashSet(key, "Item2", fileType);
-            await KeyExpire(key);
+            var Hash = new HashEntry[2];
+            Hash[0] = new HashEntry("Item1", strByte);
+            Hash[1] = new HashEntry("Item2", fileType);
+            HashMSet(key, Hash);
+            await KeyExpireAsync(key);
             return true;
         }
-        public async Task<Tuple<byte[], string>> GetFileCacheAsync(string key)
+        public Tuple<byte[], string> GetFileCache(string key)
         {
-            var Cache = await HashGetAllAsync(key);
+            var Cache =  HashGetAll(key);
             if (Cache == null || Cache.Count() == 0) return null;
             var strbyte = Cache.Where(x=>x.Name=="Item1").First().Value;
             var fileType = Cache.Where(x=>x.Name=="Item2").First().Value;
             if (string.IsNullOrEmpty(strbyte) || string.IsNullOrEmpty(fileType)) return null;
             var bytes = Convert.FromBase64String(strbyte!);
-            await KeyExpire(key, new TimeSpan(0, 10, 0));
+            KeyExpire(key, new TimeSpan(0, 10, 0));
             return new Tuple<byte[], string>(bytes, fileType!);
         }
         #endregion
@@ -203,7 +207,7 @@ namespace CommonHelpers
             return await Do(async redis =>
             {
                 var values = await redis.ListRangeAsync(key);
-                await KeyExpire(key);
+                await KeyExpireAsync(key);
                 return ConvertList<T>(values);
             });
         }
@@ -303,14 +307,6 @@ namespace CommonHelpers
             });
         }
 
-        public Task<HashEntry[]> HashGetAllAsync(string key)
-        {
-            return Do(async db =>
-            {
-                return await db.HashGetAllAsync(key);
-            });
-        }
-
         public RedisValue[] HashGetAll(string key, RedisValue[] datafiled)
         {
             return Do(db =>
@@ -356,10 +352,16 @@ namespace CommonHelpers
         /// <param name="key"></param>
         /// <param name="expiry"></param>
         /// <returns></returns>
-        public async Task<bool> KeyExpire(string key, TimeSpan? expiry=null)
+        public async Task<bool> KeyExpireAsync(string key, TimeSpan? expiry=null)
         {
             if (expiry == null) expiry = new TimeSpan(0, 10, 0);//默认10分钟
             return await Do(db => db.KeyExpireAsync(key, expiry));
+        }
+
+        public bool KeyExpire(string key, TimeSpan? expiry = null)
+        {
+            if (expiry == null) expiry = new TimeSpan(0, 10, 0);//默认10分钟
+            return Do(db => db.KeyExpire(key, expiry));
         }
         /// <summary>
         /// key是否存在
