@@ -8,6 +8,18 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["SearchService.WebAPI/SearchService.WebAPI.csproj", "SearchService.WebAPI/"]
+COPY ["SearchService.Domain/SearchService.Domain.csproj", "SearchService.Domain/"]
+COPY ["CommonInitializer/CommonInitializer.csproj", "CommonInitializer/"]
+COPY ["CommomFilters/CommomFilters.csproj", "CommomFilters/"]
+COPY ["CommonInfrastructure/CommonInfrastructure.csproj", "CommonInfrastructure/"]
+COPY ["CommonDomain/DomainCommon.csproj", "CommonDomain/"]
+COPY ["Commons/CommonHelpers.csproj", "Commons/"]
+COPY ["EventBus/EventBus.csproj", "EventBus/"]
+COPY ["CommomConst/CommomConst.csproj", "CommomConst/"]
+COPY ["CommonMiddleWare/CommonMiddleWare.csproj", "CommonMiddleWare/"]
+COPY ["CommomJWT/CommomJWT.csproj", "CommomJWT/"]
+COPY ["CommomInterface/CommomInterface.csproj", "CommomInterface/"]
+COPY ["SearchService.Infrastructure/SearchService.Infrastructure.csproj", "SearchService.Infrastructure/"]
 RUN dotnet restore "SearchService.WebAPI/SearchService.WebAPI.csproj"
 COPY . .
 WORKDIR "/src/SearchService.WebAPI"
