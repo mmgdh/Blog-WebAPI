@@ -41,6 +41,7 @@ namespace StreamService.WebAPI.Controllers
             var redisRet = redisHelper.GetFileCache(Id.ToString());
             if (redisRet != null)
             {
+                redisHelper.KeyExpire(Id.ToString(), new TimeSpan(1, 0, 0));
                 return new FileContentResult(redisRet.Item1, redisRet.Item2);
             }
 
