@@ -31,6 +31,7 @@ namespace StreamService.WebAPI.Controllers
             var file = request.File;
             var Type = request.UploadType;
             var ret = await repository.UploadFileAsync(Type,file);
+            redisHelper.KeyDelete(ret.Id.ToString());
             await _context.SaveChangesAsync();
             return ret.Id;
         }

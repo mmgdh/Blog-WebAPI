@@ -144,7 +144,7 @@ namespace CommonHelpers
             Hash[0] = new HashEntry("Item1", strByte);
             Hash[1] = new HashEntry("Item2", fileType);
             HashMSet(key, Hash);
-            await KeyExpireAsync(key);
+            await KeyExpireAsync(key, new TimeSpan(1, 0, 0));
             return true;
         }
         public Tuple<byte[], string> GetFileCache(string key)
