@@ -67,7 +67,7 @@ namespace BlogInfoService.WebAPI.Controllers
             if (ret)
             {
                  redisHelper.ReSetRedisValue(KeyName, reSetFunc: new Func<Task<List<BlogParameter>>>(async () => { return await dbContext.blogParameters.ToListAsync(); }));
-                await hubContext.Clients.All.SendAsync("UpdateParameter", Param.Id, Param.ParamValue);
+                await hubContext.Clients.All.SendAsync("UpdateParameter", Param.Id, Param.ParamValue);               
             }
 
             return ret;
