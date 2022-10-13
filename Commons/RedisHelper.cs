@@ -52,22 +52,23 @@ namespace CommonHelpers
             return result;
         }
 
-        public void ReSetRedisValue<T>(string KeyName,List<T>? values = null,Func<Task<List<T>>>? reSetFunc=null, TimeSpan? timeSpan=null)
+        public void ReSetRedisValue<T>(string KeyName,List<T>? values = null,Func<Task<List<T>>>? reSetFunc=null, TimeSpan? timeSpan=null,bool NetSetExpire=false)
         {
-            RedisLock(KeyName, timeSpan,async () =>
-            {
+            RedisLock(KeyName, timeSpan, async () =>
+             {
                 //删除后重新设置redis缓存
                 KeyDelete(KeyName);
-                if (values == null)
-                {
-                    if (reSetFunc != null)
-                        values = await reSetFunc.Invoke();
-                    else
-                        values = new List<T>();
-                }
-                await AddListAsync<T>(KeyName, values);
-                await KeyExpireAsync(KeyName, timeSpan);
-            });
+                 if (values == null)
+                 {
+                     if (reSetFunc != null)
+                         values = await reSetFunc.Invoke();
+                     else
+                         values = new List<T>();
+                 }
+                 await AddListAsync<T>(KeyName, values);
+                 if (!NetSetExpire)
+                     await KeyExpireAsync(KeyName, timeSpan);
+             });
 
 
         }
@@ -211,6 +212,15 @@ namespace CommonHelpers
                 return ConvertList<T>(values);
             });
         }
+        public async Task<List<T>> ListRangeAsync<T>(string key,int page,int pageSize)
+        {
+            return await Do(async redis =>
+            {
+                var values = await redis.ListRangeAsync(key, page * pageSize, (page + 1) * pageSize);
+                await KeyExpireAsync(key);
+                return ConvertList<T>(values);
+            });
+        }
         public async Task<bool> AddListAsync<T>(string key, IEnumerable<T> values)
         {
             var value = values.Select(x => ConvertJson(x));
@@ -218,13 +228,10 @@ namespace CommonHelpers
             await Do(db => db.ListRightPushAsync(key, redisValues.ToArray()));
             return true;
         }
-        public async Task<bool> ListPushOneAsync<T>(string key,T value)
+        public async Task<bool> ListPushOneAsync<T>(string key, T value)
         {
-            if (KeyExists(key))
-            {
-              await  Do(db => db.ListRightPushAsync(key, new RedisValue(ConvertJson(value))));
-            }
-            return true;
+            var ret = await Do(db => db.ListRightPushAsync(key, new RedisValue(ConvertJson(value))));
+            return ret > 0;
         }
         #endregion
 

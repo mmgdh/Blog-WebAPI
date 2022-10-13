@@ -5,15 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UpdateTimeLineService.Domain.IRepository;
+using TimeLineService.Domain.IRepository;
 
-namespace UpdateTimeLineService.Infrastructure
+namespace TimeLineService.Infrastructure
 {
     public class ModuleInitializer : IModuleInitializer
     {
         public void Initialize(IServiceCollection services)
         {
-            services.AddScoped<IUpdateTimeLineRepository, UpdateTimeLineRepository>();
+            services.AddScoped<ITimeLineRepository, TimeLineRepository>();
         }
     }
 }

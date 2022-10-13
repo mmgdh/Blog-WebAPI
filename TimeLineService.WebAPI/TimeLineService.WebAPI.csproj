@@ -1,11 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>e79dd6d8-17d3-49f1-b59f-7fef2ab5bd09</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,8 +12,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonInitializer\CommonInitializer.csproj" />
-    <ProjectReference Include="..\SearchService.Domain\SearchService.Domain.csproj" />
-    <ProjectReference Include="..\SearchService.Infrastructure\SearchService.Infrastructure.csproj" />
+    <ProjectReference Include="..\Commons\CommonHelpers.csproj" />
+    <ProjectReference Include="..\TimeLineService.Domain\TimeLineService.Domain.csproj" />
+    <ProjectReference Include="..\TimeLineService.Infrastructure\TimeLineService.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "UpdateTimeLineService.WebAPI": {
+    "TimeLineService.WebAPI": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
