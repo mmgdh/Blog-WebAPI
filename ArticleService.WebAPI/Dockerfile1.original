@@ -1,32 +1,32 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["ArticleService.WebAPI/ArticleService.WebAPI.csproj", "ArticleService.WebAPI/"]
+COPY ["ArticleService.Infrastructure/ArticleService.Infrastructure.csproj", "ArticleService.Infrastructure/"]
 COPY ["AritcleService.Domian/ArticleService.Domain.csproj", "AritcleService.Domian/"]
 COPY ["CommonDomain/DomainCommon.csproj", "CommonDomain/"]
 COPY ["CommonInfrastructure/CommonInfrastructure.csproj", "CommonInfrastructure/"]
+COPY ["Commons/CommonHelpers.csproj", "Commons/"]
 COPY ["CommonInitializer/CommonInitializer.csproj", "CommonInitializer/"]
 COPY ["CommomFilters/CommomFilters.csproj", "CommomFilters/"]
-COPY ["CommomJWT/CommomJWT.csproj", "CommomJWT/"]
-COPY ["CommomInterface/CommomInterface.csproj", "CommomInterface/"]
-COPY ["CommonMiddleWare/CommonMiddleWare.csproj", "CommonMiddleWare/"]
-COPY ["Commons/CommonHelpers.csproj", "Commons/"]
 COPY ["EventBus/EventBus.csproj", "EventBus/"]
 COPY ["CommomConst/CommomConst.csproj", "CommomConst/"]
-COPY ["ArticleService.Infrastructure/ArticleService.Infrastructure.csproj", "ArticleService.Infrastructure/"]
+COPY ["CommonMiddleWare/CommonMiddleWare.csproj", "CommonMiddleWare/"]
+COPY ["CommomJWT/CommomJWT.csproj", "CommomJWT/"]
+COPY ["CommomInterface/CommomInterface.csproj", "CommomInterface/"]
 RUN dotnet restore "ArticleService.WebAPI/ArticleService.WebAPI.csproj"
 COPY . .
 WORKDIR "/src/ArticleService.WebAPI"
 RUN dotnet build "ArticleService.WebAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "ArticleService.WebAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ArticleService.WebAPI.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
