@@ -14,6 +14,7 @@ using StackExchange.Redis;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using CommonHelpers;
 using CommomFilters;
+using Microsoft.Extensions.Options;
 
 namespace CommonInitializer
 {
@@ -31,8 +32,8 @@ namespace CommonInitializer
             //{
             //    //不能使用ConfigureAppConfiguration中的configBuilder去读取配置，否则就循环调用了，因此这里直接自己去读取配置文件
             //    var configRoot = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-            //    string connStr = configRoot.GetValue<string>("DefaultDB:ConnStr");
-            //    string connStr = builder.Configuration.GetValue<string>("DefaultDB:ConnStr");
+            //    string connStr = configRoot.GetValue<string>("DefaultDBConnStr");
+            //    string connStr = builder.Configuration.GetValue<string>("DefaultDBConnStr");
             //    builder.Services.AddDbContext<BaseDbContext>(option =>
             //    {
             //        option.UseSqlServer(connStr)
@@ -73,9 +74,16 @@ namespace CommonInitializer
             //IdentityService项目还需要启用AddIdentityCore
             builder.Services.AddAuthorization();
             builder.Services.AddAuthentication();
-            services.Configure<JWTOptions>(configuration.GetSection("JWT"));
-
-            JWTOptions jwtOpt = configuration.GetSection("JWT").Get<JWTOptions>();
+            var JWTJson = configuration.GetSection("JWTJson");
+            if (JWTJson==null||JWTJson.Value==null) throw new Exception("获取JWT环境变量失败");
+            JWTOptions jwtOpt = JsonConvert.DeserializeObject<JWTOptions>(JWTJson.Value)!;
+            services.Configure<JWTOptions>(x =>
+            {
+                x.Key=jwtOpt.Key;
+                x.Issuer=jwtOpt.Issuer;
+                x.Audience=jwtOpt.Audience;
+            }) ;
+            //builder.Services.Configure<JWTOptions>(jwtOpt);
             if (jwtOpt == null) throw new Exception("获取JWT配置出错");
             builder.Services.AddJWTAuthentication(jwtOpt);
             //启用Swagger中的【Authorize】按钮。这样就不用每个项目的AddSwaggerGen中单独配置了
@@ -113,7 +121,7 @@ namespace CommonInitializer
 
 
             #region Redis
-            string redisConnStr = configuration.GetValue<string>("Redis:ConnStr");
+            string redisConnStr = configuration.GetValue<string>("RedisConnStr")!;
             IConnectionMultiplexer redisConnMultiplexer = ConnectionMultiplexer.Connect(redisConnStr);
             services.AddSingleton(typeof(IConnectionMultiplexer), redisConnMultiplexer);
             services.Configure<ForwardedHeadersOptions>(options =>

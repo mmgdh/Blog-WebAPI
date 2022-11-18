@@ -1,0 +1,114 @@
+# yaml 配置实例
+version: '3'
+services:
+  redis:
+    image: redis
+    container_name: Blog-Redis
+    restart: always
+    volumes:
+      - ./DockerVolumes/Redis/redis.conf:/etc/redis/redis.conf
+      - ./DockerVolumes/Redis/data:/data
+    command: /bin/sh -c "redis-server /etc/redis/redis.conf --appendonly yes" # 指定配置文件并开启持久化
+    ports:
+      - 6379:6379
+    networks:
+      blognet:
+        ipv4_address: 172.20.1.1
+  nginx:
+    image: nginx
+    container_name: Blog-Service-Nginx
+    restart: always
+    volumes:
+      - ./DockerVolumes/Nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 88:80
+    networks:
+      blognet:
+        ipv4_address: 172.20.1.5
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: Blog-RabbitMQ
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./DockerVolumes/RabbitMQ/data:/var/lib/rabbitmq
+      # - ./DockerVolumes/RabbitMQ/conf:/etc/rabbitmq
+    networks:
+      blognet:
+        ipv4_address: 172.20.1.6
+  elastic-search:
+    image: elasticsearch:7.6.2
+    container_name: Blog-ElasticSearch
+    volumes:
+      - ./DockerVolumes/ElasticSearch/config:/usr/share/elasticsearch/config
+      - ./DockerVolumes/ElasticSearch/data:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      blognet:
+        ipv4_address: 172.20.1.7
+
+
+
+
+  article-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-Article
+    env_file:
+      - .env
+    networks:
+      blognet:
+        ipv4_address: 172.20.0.10
+  bloginfo-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-BlogInfo
+    env_file:
+      - .env
+    networks:
+      blognet:
+        ipv4_address: 172.20.0.20
+  identity-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-Identity
+    env_file:
+      - .env
+    networks:
+      blognet:
+        ipv4_address: 172.20.0.30
+  search-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-Search
+    env_file:
+      - .env
+    networks:
+      blognet:
+        ipv4_address: 172.20.0.40
+  stream-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-Stream
+    env_file:
+      - .env
+    networks:
+      blognet:
+        ipv4_address: 172.20.0.50
+
+networks:
+  blognet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+  #可以自定义network名称，这里使用default表示如果不在service中单独配置就使用该设置 
+  # default: 
+  #   external: 
+  #     #使用自定义network
+  #     name: mynet

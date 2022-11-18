@@ -9,7 +9,7 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 var curAssembly = Assembly.GetExecutingAssembly();
 //builder.ConfigureDbConfiguration<ArticleDbContext>();
-builder.Services.AddDbContext<ArticleDbContext>(option => option.UseSqlServer(Environment.GetEnvironmentVariable("DefaultDB:ConnStr") ?? builder.Configuration.GetValue<string>("ConnectionStrings:SqlServer")));
+builder.Services.AddDbContext<ArticleDbContext>(option => option.UseSqlServer(Environment.GetEnvironmentVariable("DefaultDBConnStr") ?? builder.Configuration.GetValue<string>("ConnectionStrings:SqlServer")));
 builder.ConifgureExtraService(new InitializerOptions
 {
     EventBusQueueName = "ArticleService",

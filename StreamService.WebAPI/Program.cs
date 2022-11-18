@@ -14,7 +14,7 @@ var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
 var CurAssembly = Assembly.GetExecutingAssembly();
 // Add services to the container.
 //builder.ConfigureDbConfiguration<ArticleDbContext>();
-builder.Services.AddDbContext<UploadDbContext>(option => option.UseSqlServer(Environment.GetEnvironmentVariable("DefaultDB:ConnStr") ?? builder.Configuration.GetValue<string>("ConnectionStrings:SqlServer")));
+builder.Services.AddDbContext<UploadDbContext>(option => option.UseSqlServer(Environment.GetEnvironmentVariable("DefaultDBConnStr") ?? builder.Configuration.GetValue<string>("ConnectionStrings:SqlServer")));
 builder.ConifgureExtraService(new InitializerOptions
 {
     EventBusQueueName="StreamService",
@@ -42,8 +42,8 @@ CosXmlConfig config = new CosXmlConfig.Builder()
   .SetRegion(region)  //设置一个默认的存储桶地域
   .SetDebugLog(true)  //显示日志
   .Build();  //创建 CosXmlConfig 对象
-string secretId = Environment.GetEnvironmentVariable("TencentCos:secretId")!; //"云 API 密钥 SecretId";
-string secretKey = Environment.GetEnvironmentVariable("TencentCos:secretKey")!; //"云 API 密钥 SecretKey";
+string secretId = Environment.GetEnvironmentVariable("TencentCos_secretId")!; //"云 API 密钥 SecretId";
+string secretKey = Environment.GetEnvironmentVariable("TencentCos_secretKey")!; //"云 API 密钥 SecretKey";
 long durationSecond = 600;  //每次请求签名有效时长，单位为秒
 QCloudCredentialProvider cosCredentialProvider = new DefaultQCloudCredentialProvider(
   secretId, secretKey, durationSecond);

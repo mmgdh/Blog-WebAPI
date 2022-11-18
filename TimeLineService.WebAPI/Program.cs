@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var curAssembly = Assembly.GetExecutingAssembly();
 builder.Services.AddControllers();
-builder.Services.AddDbContext<TimeLineDbContext>(option => option.UseSqlServer(Environment.GetEnvironmentVariable("DefaultDB:ConnStr") ?? builder.Configuration.GetValue<string>("ConnectionStrings:SqlServer")));
+builder.Services.AddDbContext<TimeLineDbContext>(option => option.UseSqlServer(Environment.GetEnvironmentVariable("DefaultDBConnStr") ?? builder.Configuration.GetValue<string>("ConnectionStrings:SqlServer")));
 
 builder.ConifgureExtraService(new InitializerOptions
 {

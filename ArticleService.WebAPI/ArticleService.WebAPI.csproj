@@ -21,7 +21,6 @@
     <ProjectReference Include="..\AritcleService.Domian\ArticleService.Domain.csproj" />
     <ProjectReference Include="..\ArticleService.Infrastructure\ArticleService.Infrastructure.csproj" />
     <ProjectReference Include="..\CommonInfrastructure\CommonInfrastructure.csproj" />
-    <ProjectReference Include="..\CommonInitializer\CommonInitializer.csproj" />
     <ProjectReference Include="..\EventBus\EventBus.csproj" />
   </ItemGroup>
 

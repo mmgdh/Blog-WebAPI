@@ -21,7 +21,7 @@ COPY ["EventBus/EventBus.csproj", "EventBus/"]
 COPY ["CommomConst/CommomConst.csproj", "CommomConst/"]
 COPY ["ArticleService.Infrastructure/ArticleService.Infrastructure.csproj", "ArticleService.Infrastructure/"]
 RUN dotnet restore "ArticleService.WebAPI/ArticleService.WebAPI.csproj"
-# COPY . .
+COPY . .
 WORKDIR "/src/ArticleService.WebAPI"
 RUN dotnet build "ArticleService.WebAPI.csproj" -c Release -o /app/build
 

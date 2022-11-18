@@ -13,7 +13,7 @@ builder.ConifgureExtraService(new InitializerOptions
     EventBusQueueName = "IdentityService.WebAPI"
 });
 builder.Services.AddControllers();
-builder.Services.AddDbContext<IdDbContext>(option => option.UseSqlServer(Environment.GetEnvironmentVariable("DefaultDB:ConnStr") ?? builder.Configuration.GetValue<string>("ConnectionStrings:SqlServer")));
+builder.Services.AddDbContext<IdDbContext>(option => option.UseSqlServer(Environment.GetEnvironmentVariable("DefaultDBConnStr") ?? builder.Configuration.GetValue<string>("ConnectionStrings:SqlServer")));
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "IdentityService.WebAPI", Version = "v1" });
