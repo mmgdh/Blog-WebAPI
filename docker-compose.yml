@@ -50,51 +50,51 @@ services:
       blognet:
         ipv4_address: 172.20.1.7
         
-  # article-service:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile-Article
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     blognet:
-  #       ipv4_address: 172.20.0.10
-  # bloginfo-service:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile-BlogInfo
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     blognet:
-  #       ipv4_address: 172.20.0.20
-  # identity-service:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile-Identity
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     blognet:
-  #       ipv4_address: 172.20.0.30
-  # search-service:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile-Search
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     blognet:
-  #       ipv4_address: 172.20.0.40
-  # stream-service:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile-Stream
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     blognet:
-  #       ipv4_address: 172.20.0.50
+  article-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-Article
+    env_file:
+      - .env
+    networks:
+      blognet:
+        ipv4_address: 172.20.0.10
+  bloginfo-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-BlogInfo
+    env_file:
+      - .env
+    networks:
+      blognet:
+        ipv4_address: 172.20.0.20
+  identity-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-Identity
+    env_file:
+      - .env
+    networks:
+      blognet:
+        ipv4_address: 172.20.0.30
+  search-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-Search
+    env_file:
+      - .env
+    networks:
+      blognet:
+        ipv4_address: 172.20.0.40
+  stream-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-Stream
+    env_file:
+      - .env
+    networks:
+      blognet:
+        ipv4_address: 172.20.0.50
 networks:
   blognet:
     driver: bridge
