@@ -12,5 +12,7 @@ namespace CommonInitializer
         public string? EventBusQueueName { get; set; }
 
         public Assembly? curAssembly { get; set; }
+
+
     }
 }

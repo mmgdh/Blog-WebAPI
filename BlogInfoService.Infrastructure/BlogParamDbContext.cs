@@ -5,13 +5,15 @@ using BlogInfoService.Domain.Entities;
 
 namespace BlogInfoService.Infrastructure
 {
-    public class BlogParamDbContext: BaseDbContext
+    public class BlogParamDbContext : BaseDbContext
     {
 
         public DbSet<BlogParameter> blogParameters { get; set; }
+
+        public DbSet<FriendLink> friendLinks { get; set; }
         public BlogParamDbContext(DbContextOptions options, IMediator? mediator) : base(options, mediator)
         {
-            
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

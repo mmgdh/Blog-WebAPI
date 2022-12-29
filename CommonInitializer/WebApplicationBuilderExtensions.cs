@@ -75,14 +75,14 @@ namespace CommonInitializer
             builder.Services.AddAuthorization();
             builder.Services.AddAuthentication();
             var JWTJson = configuration.GetSection("JWTJson");
-            if (JWTJson==null||JWTJson.Value==null) throw new Exception("获取JWT环境变量失败");
+            if (JWTJson == null || JWTJson.Value == null) throw new Exception("获取JWT环境变量失败");
             JWTOptions jwtOpt = JsonConvert.DeserializeObject<JWTOptions>(JWTJson.Value)!;
             services.Configure<JWTOptions>(x =>
             {
-                x.Key=jwtOpt.Key;
-                x.Issuer=jwtOpt.Issuer;
-                x.Audience=jwtOpt.Audience;
-            }) ;
+                x.Key = jwtOpt.Key;
+                x.Issuer = jwtOpt.Issuer;
+                x.Audience = jwtOpt.Audience;
+            });
             //builder.Services.Configure<JWTOptions>(jwtOpt);
             if (jwtOpt == null) throw new Exception("获取JWT配置出错");
             builder.Services.AddJWTAuthentication(jwtOpt);
@@ -106,7 +106,10 @@ namespace CommonInitializer
 
 
             services.AddControllers(option =>
-                option.Filters.Add(typeof(ExceptionFilter))
+            {
+                option.Filters.Add(typeof(ExceptionFilter));
+                option.Filters.Add(typeof(ActionFilter));
+            }
             ).AddNewtonsoftJson(option =>
             {
                 #region NewtonsoftJson
